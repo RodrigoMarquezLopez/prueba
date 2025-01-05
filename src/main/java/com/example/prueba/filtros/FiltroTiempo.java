@@ -16,12 +16,13 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
+
+// Implementacion del filtro por tiempo
 public class FiltroTiempo extends OncePerRequestFilter {
 
     private final LocalTime inicio = LocalTime.of(9, 0);
@@ -33,9 +34,6 @@ public class FiltroTiempo extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
 
-        log.info(String.format("\nSolicitud recibida: IP=%s Ruta=%s Fecha y hora=%s%n",
-                request.getRemoteAddr(), request.getRequestURI(), LocalDateTime.now()));
-
         peticionService.insrtertar(Peticion.builder().ip(request.getRemoteAddr()).build());
         LocalTime ahora = LocalTime.now();
         DayOfWeek hoy = LocalDate.now().getDayOfWeek();
@@ -46,7 +44,6 @@ public class FiltroTiempo extends OncePerRequestFilter {
             response.getWriter().write("Acceso denegado: Fuera del horario permitido.");
             return;
         }
-
         filterChain.doFilter(request, response);
     }
 }
